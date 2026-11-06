@@ -1,5 +1,5 @@
 -- ============================================================================
--- [[ shitaro.crack | FULL 1:1 BLOX STRIKE ENGINE & UI REPLICA ]]
+-- [[ shitaro.crack | FULL 1:1 BLOX STRIKE ENGINE & UI REPLICA (FIXED) ]]
 -- ============================================================================
 
 local Players = game:GetService("Players")
@@ -16,30 +16,17 @@ local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
 -- ============================================================================
--- 1. ПОЛНАЯ КОНФИГУРАЦИЯ ВСЕХ 6 ВКЛАДОК
+-- 1. КОНФИГУРАЦИЯ
 -- ============================================================================
 local Config = {
-    -- [AIM / RAGEBOT]
     RageEnable = true,
     AutoShoot = true,
     SilentAim = true,
     FOV = 180,
     ShowFOV = false,
-    Override = "none",           -- "none", "force head", "force body"
-    Hitboxes = {
-        head = true,
-        chest = true,
-        pelvis = true,
-        arms = false,
-        legs = false
-    },
-    Multipoint = {
-        head = true,
-        chest = true,
-        pelvis = false,
-        arms = false,
-        legs = false
-    },
+    Override = "none",
+    Hitboxes = { head = true, chest = true, pelvis = true, arms = false, legs = false },
+    Multipoint = { head = true, chest = true, pelvis = false, arms = false, legs = false },
     MultipointScale = 75,
     Hitchance = 85,
     MinDamage = 40,
@@ -49,34 +36,31 @@ local Config = {
     HitboxExpander = true,
     HitboxSize = 6.5,
 
-    -- [TRIGGERBOT]
     TriggerEnable = true,
-    TriggerDelay = 15,           -- мс
+    TriggerDelay = 15,
     TriggerBurst = 1,
     TriggerThroughWalls = true,
     TriggerHeadOnly = false,
 
-    -- [ANTI-AIM]
     AAEnable = true,
-    Yaw = "backward",            -- "none", "backward", "spin", "static"
+    Yaw = "backward",
     YawOffset = 0,
-    YawModifier = "jitter",      -- "none", "jitter", "offset", "random"
+    YawModifier = "jitter",
     ModifierOffset = 38,
-    Pitch = "down",              -- "none", "down", "up", "zero"
+    Pitch = "down",
     Spin = false,
     SpinSpeed = 35,
     EnableManuals = true,
     ManualLeftKey = Enum.KeyCode.Z,
     ManualRightKey = Enum.KeyCode.C,
     ManualBackKey = Enum.KeyCode.X,
-    ManualMode = "toggle",       -- "toggle", "hold", "always"
+    ManualMode = "toggle",
     ManualAngle = true,
     Freestanding = false,
-    ActiveManual = "none",       -- "none", "left", "right", "back"
+    ActiveManual = "none",
 
-    -- [VISUALS / ESP]
     ESPEnable = true,
-    TeamCheck = false,           -- Выключено по умолчанию для Разминки (Rozgrzewka), можно включить в меню
+    TeamCheck = false,
     BoxESP = true,
     BoxColor = Color3.fromRGB(255, 255, 255),
     NameESP = true,
@@ -94,7 +78,6 @@ local Config = {
     TracerDuration = 0.75,
     HitChams = true,
 
-    -- [MISC]
     ThirdPerson = true,
     ThirdPersonDist = 11,
     ThirdPersonHeight = 1.2,
@@ -105,13 +88,11 @@ local Config = {
     Hitlogs = true,
     Killsay = false,
 
-    -- [SETTINGS]
     MenuKey = Enum.KeyCode.RightShift,
     Watermark = true,
     BottomIndicators = true
 }
 
--- Точная цветовая палитра с видео (00:41 - 00:55)
 local Palette = {
     WindowBg = Color3.fromRGB(15, 15, 18),
     PanelBg = Color3.fromRGB(20, 20, 24),
@@ -129,7 +110,7 @@ local Palette = {
 }
 
 -- ============================================================================
--- 2. ИНИЦИАЛИЗАЦИЯ GUI И ОЧИСТКА СТАРЫХ ОБЪЕКТОВ
+-- 2. GUI ИНИЦИАЛИЗАЦИЯ
 -- ============================================================================
 local function GetSafeGuiParent()
     local ok, res = pcall(function()
@@ -141,9 +122,7 @@ end
 
 local GuiParent = GetSafeGuiParent()
 for _, v in ipairs(GuiParent:GetChildren()) do
-    if v.Name == "ShitaroCrackV2" then
-        v:Destroy()
-    end
+    if v.Name == "ShitaroCrackV2" then v:Destroy() end
 end
 if Workspace:FindFirstChild("ShitaroEffects") then
     Workspace.ShitaroEffects:Destroy()
@@ -169,7 +148,6 @@ local ChamsContainer = Instance.new("Folder")
 ChamsContainer.Name = "ChamsContainer"
 ChamsContainer.Parent = ScreenGui
 
--- Утилиты создания UI
 local function MakeCorner(parent, radius)
     local c = Instance.new("UICorner")
     c.CornerRadius = UDim.new(0, radius or 4)
@@ -188,7 +166,7 @@ local function MakeStroke(parent, color, thickness, trans)
 end
 
 -- ============================================================================
--- 3. СИСТЕМА ЦЕНТРАЛЬНЫХ НИЖНИХ ХИТЛОГОВ (1:1 С ВИДЕО)
+-- 3. ХИТЛОГИ
 -- ============================================================================
 local HitlogHolder = Instance.new("Frame")
 HitlogHolder.Name = "HitlogHolder"
@@ -258,7 +236,7 @@ local function PushHitlog(richText, duration)
 end
 
 -- ============================================================================
--- 4. ПОСТРОЕНИЕ ОКНА МЕНЮ SHITARO.CRACK (ТОЧНАЯ КОПИЯ С ВИДЕО 00:41 - 00:55)
+-- 4. ОКНО МЕНЮ
 -- ============================================================================
 local MainWin = Instance.new("Frame")
 MainWin.Name = "MainWin"
@@ -271,7 +249,6 @@ MainWin.Parent = ScreenGui
 MakeCorner(MainWin, 6)
 MakeStroke(MainWin, Palette.Stroke, 1)
 
--- Верхняя панель (Header: слева "shitaro.crack v", справа "execution | setting | feedback")
 local TopHeader = Instance.new("Frame")
 TopHeader.Size = UDim2.new(1, 0, 0, 30)
 TopHeader.BackgroundColor3 = Palette.PanelBg
@@ -324,7 +301,7 @@ for idx, hName in ipairs({"execution", "setting", "feedback"}) do
     if idx == 1 then MakeStroke(hb, Palette.Stroke, 1) end
 end
 
--- Перетаскивание главного окна (ПК + Сенсор)
+-- Перетаскивание
 do
     local dragging, dragInput, dragStart, startPos
     TopHeader.InputBegan:Connect(function(input)
@@ -350,7 +327,6 @@ do
     end)
 end
 
--- Всплывающее контекстное окно бинда (как на 00:49 - 00:55: key | toggle | hold | always)
 local KeybindPopup = Instance.new("Frame")
 KeybindPopup.Name = "KeybindPopup"
 KeybindPopup.Size = UDim2.new(0, 105, 0, 92)
@@ -368,9 +344,7 @@ kpLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 kpLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 kpLayout.Parent = KeybindPopup
 
-local currentBindTarget = nil
 local kpButtons = {}
-
 for _, kpMode in ipairs({"key", "toggle", "hold", "always"}) do
     local b = Instance.new("TextButton")
     b.Size = UDim2.new(1, -8, 0, 19)
@@ -401,7 +375,7 @@ for _, kpMode in ipairs({"key", "toggle", "hold", "always"}) do
 end
 
 -- ============================================================================
--- 5. КОНСТРУКТОР ЭЛЕМЕНТОВ УПРАВЛЕНИЯ (1:1 С ВИДЕО)
+-- 5. КОНСТРУКТОР ЭЛЕМЕНТОВ
 -- ============================================================================
 local function CreateToggle(parent, text, defaultVal, callback)
     local Row = Instance.new("Frame")
@@ -606,7 +580,7 @@ local function CreateKeybindRow(parent, text, defaultLabel, onActivate)
         listening = true
         BindBtn.Text = "..."
     end)
-    UserInputService.InputBegan:Connect(function(input, gp)
+    UserInputService.InputBegan:Connect(function(input)
         if listening and input.UserInputType == Enum.UserInputType.Keyboard then
             listening = false
             BindBtn.Text = string.lower(input.KeyCode.Name)
@@ -617,7 +591,7 @@ local function CreateKeybindRow(parent, text, defaultLabel, onActivate)
 end
 
 -- ============================================================================
--- 6. КОНТЕЙНЕР ВКЛАДОК И ГЛАВНАЯ СТРАНИЦА (КАК НА ВИДЕО 00:41 - 00:55)
+-- 6. СТРАНИЦЫ
 -- ============================================================================
 local Pages = {}
 local function CreatePage(name, visible)
@@ -639,9 +613,7 @@ local PageMisc = CreatePage("misc", false)
 local PageAntiAim = CreatePage("anti-aim", false)
 local PageSettings = CreatePage("settings", false)
 
--- ----------------------------------------------------------------------------
--- СТРАНИЦА 1 (ОСНОВНОЙ ЭКРАН С ВИДЕО: СЛЕВА RAGE/AIM, СПРАВА ANTI-AIM + МАНЕКЕН + OTHER)
--- ----------------------------------------------------------------------------
+-- AИМ страница
 local LeftCol = Instance.new("Frame")
 LeftCol.Size = UDim2.new(0, 235, 1, -20)
 LeftCol.Position = UDim2.new(0, 10, 0, 10)
@@ -683,7 +655,6 @@ CreateToggle(LeftScroll, "hitbox expander", Config.HitboxExpander, function(v) C
 CreateSlider(LeftScroll, "hitbox size", 2, 14, math.floor(Config.HitboxSize), function(v) Config.HitboxSize = v end)
 CreateToggle(LeftScroll, "third person", Config.ThirdPerson, function(v) Config.ThirdPerson = v end)
 
--- Правая верхняя секция (anti-aim + интерактивный манекен скелета справа)
 local RightAATop = Instance.new("Frame")
 RightAATop.Size = UDim2.new(0, 375, 0, 215)
 RightAATop.Position = UDim2.new(0, 255, 0, 10)
@@ -724,7 +695,6 @@ CreateDropdown(aaControls, "pitch", {"down", "none", "up", "zero"}, 1, function(
 CreateToggle(aaControls, "spin", Config.Spin, function(v) Config.Spin = v end)
 CreateSlider(aaControls, "spin speed", 1, 100, Config.SpinSpeed, function(v) Config.SpinSpeed = v end)
 
--- Окно предпросмотра скелета/хитбоксов (1:1 как на 00:42 / 00:48)
 local PreviewPane = Instance.new("Frame")
 PreviewPane.Size = UDim2.new(0, 135, 0, 182)
 PreviewPane.Position = UDim2.new(1, -145, 0, 22)
@@ -779,7 +749,6 @@ PreviewHPTxt.TextSize = 8
 PreviewHPTxt.TextXAlignment = Enum.TextXAlignment.Right
 PreviewHPTxt.Parent = PreviewBox
 
--- Отрисовка скелета и кликабельных точек хитбоксов внутри PreviewBox
 local function AddBoneLine(x, y, w, h)
     local line = Instance.new("Frame")
     line.Size = UDim2.new(0, w, 0, h)
@@ -789,7 +758,6 @@ local function AddBoneLine(x, y, w, h)
     line.Parent = PreviewBox
 end
 
--- Голова-круг
 local HeadRing = Instance.new("Frame")
 HeadRing.Size = UDim2.new(0, 18, 0, 18)
 HeadRing.Position = UDim2.new(0.5, -9, 0, 10)
@@ -798,13 +766,13 @@ HeadRing.Parent = PreviewBox
 MakeCorner(HeadRing, 99)
 MakeStroke(HeadRing, Color3.fromRGB(215, 215, 225), 1.2)
 
-AddBoneLine(-1, 28, 2, 44)  -- Позвоночник
-AddBoneLine(-18, 34, 36, 2) -- Плечи
-AddBoneLine(-18, 34, 2, 34) -- Левая рука
-AddBoneLine(16, 34, 2, 34)  -- Правая рука
-AddBoneLine(-10, 72, 20, 2) -- Таз
-AddBoneLine(-10, 72, 2, 40) -- Левая нога
-AddBoneLine(8, 72, 2, 40)   -- Правая нога
+AddBoneLine(-1, 28, 2, 44)
+AddBoneLine(-18, 34, 36, 2)
+AddBoneLine(-18, 34, 2, 34)
+AddBoneLine(16, 34, 2, 34)
+AddBoneLine(-10, 72, 20, 2)
+AddBoneLine(-10, 72, 2, 40)
+AddBoneLine(8, 72, 2, 40)
 
 local function AddHitboxNode(x, y, boneKey)
     local node = Instance.new("TextButton")
@@ -830,7 +798,6 @@ AddHitboxNode(17, 50, "arms")
 AddHitboxNode(-9, 95, "legs")
 AddHitboxNode(9, 95, "legs")
 
--- Правая нижняя секция (other: manuals & freestanding как на 00:49 - 00:55)
 local RightOtherBot = Instance.new("Frame")
 RightOtherBot.Size = UDim2.new(0, 375, 0, 145)
 RightOtherBot.Position = UDim2.new(0, 255, 0, 235)
@@ -878,9 +845,6 @@ end)
 CreateToggle(otherControls, "manual angle", Config.ManualAngle, function(v) Config.ManualAngle = v end)
 CreateToggle(otherControls, "freestanding", Config.Freestanding, function(v) Config.Freestanding = v end)
 
--- ----------------------------------------------------------------------------
--- НАПОЛНЕНИЕ ОСТАЛЬНЫХ ВКЛАДОК ДОК-ПАНЕЛИ (TRIGGER, VISUALS, MISC, ANTI-AIM, SETTINGS)
--- ----------------------------------------------------------------------------
 local function SetupTwoColumnPage(page, leftTitle, rightTitle)
     local L = Instance.new("Frame")
     L.Size = UDim2.new(0, 302, 1, -20)
@@ -941,7 +905,6 @@ local function SetupTwoColumnPage(page, leftTitle, rightTitle)
     return lCont, rCont
 end
 
--- Вкладка TRIGGER
 do
     local L, R = SetupTwoColumnPage(PageTrigger, "triggerbot", "accuracy & filter")
     CreateToggle(L, "enable triggerbot", Config.TriggerEnable, function(v) Config.TriggerEnable = v end)
@@ -952,7 +915,6 @@ do
     CreateToggle(R, "team check (disable in warmup)", Config.TeamCheck, function(v) Config.TeamCheck = v end)
 end
 
--- Вкладка VISUALS
 do
     local L, R = SetupTwoColumnPage(PageVisuals, "enemy esp", "chams & world")
     CreateToggle(L, "enable esp", Config.ESPEnable, function(v) Config.ESPEnable = v end)
@@ -972,7 +934,6 @@ do
     CreateToggle(R, "remove smoke", Config.NoSmoke, function(v) Config.NoSmoke = v end)
 end
 
--- Вкладка MISC
 do
     local L, R = SetupTwoColumnPage(PageMisc, "camera & movement", "notifications & logs")
     CreateToggle(L, "third person", Config.ThirdPerson, function(v) Config.ThirdPerson = v end)
@@ -984,7 +945,6 @@ do
     CreateToggle(R, "bottom dock indicators", Config.BottomIndicators, function(v) Config.BottomIndicators = v end)
 end
 
--- Вкладка ANTI-AIM (дубликат для прямого перехода)
 do
     local L, R = SetupTwoColumnPage(PageAntiAim, "anti-aim angles", "manuals & desync")
     CreateToggle(L, "enable anti-aim", Config.AAEnable, function(v) Config.AAEnable = v end)
@@ -998,7 +958,6 @@ do
     CreateToggle(R, "enable manual arrows", Config.EnableManuals, function(v) Config.EnableManuals = v end)
 end
 
--- Вкладка SETTINGS
 do
     local L, R = SetupTwoColumnPage(PageSettings, "configuration", "script info")
     CreateToggle(L, "show bottom bar", Config.BottomIndicators, function(v) Config.BottomIndicators = v end)
@@ -1006,7 +965,7 @@ do
 end
 
 -- ============================================================================
--- 7. НИЖНЯЯ ДОК-ПАНЕЛЬ И ИНДИКАТОРЫ (1:1 КАК НА ВИДЕО 00:49 - 00:55)
+-- 7. НИЖНЯЯ ПАНЕЛЬ
 -- ============================================================================
 local BottomBarContainer = Instance.new("Frame")
 BottomBarContainer.Name = "BottomBarContainer"
@@ -1015,7 +974,6 @@ BottomBarContainer.Position = UDim2.new(0.5, -320, 0.45, 214)
 BottomBarContainer.BackgroundTransparency = 1
 BottomBarContainer.Parent = ScreenGui
 
--- Левая иконка-плашка [S]
 local LeftLogoPill = Instance.new("Frame")
 LeftLogoPill.Size = UDim2.new(0, 28, 1, 0)
 LeftLogoPill.Position = UDim2.new(0, 0, 0, 0)
@@ -1033,7 +991,6 @@ LeftLogoTxt.TextColor3 = Palette.Accent
 LeftLogoTxt.TextSize = 13
 LeftLogoTxt.Parent = LeftLogoPill
 
--- Центральная панель с 6 вкладками (aim | trigger | visuals | misc | anti-aim | settings)
 local CenterDock = Instance.new("Frame")
 CenterDock.Size = UDim2.new(0, 415, 1, 0)
 CenterDock.Position = UDim2.new(0, 34, 0, 0)
@@ -1083,7 +1040,6 @@ for idx, def in ipairs(dockTabDefs) do
     end)
 end
 
--- Правая индикаторная плашка ("1st camera / 3rd camera" | "manual left") как на 00:50
 local RightStatusPill = Instance.new("Frame")
 RightStatusPill.Size = UDim2.new(0, 185, 1, 0)
 RightStatusPill.Position = UDim2.new(1, -185, 0, 0)
@@ -1103,7 +1059,6 @@ StatusLabel.TextColor3 = Palette.TextMuted
 StatusLabel.TextSize = 10
 StatusLabel.Parent = RightStatusPill
 
--- Плавающая кнопка открытия/скрытия меню для телефонов и ПК
 local FloatingToggle = Instance.new("TextButton")
 FloatingToggle.Size = UDim2.new(0, 102, 0, 26)
 FloatingToggle.Position = UDim2.new(0, 12, 0.45, 0)
@@ -1143,10 +1098,8 @@ UserInputService.InputBegan:Connect(function(input, gp)
 end)
 
 -- ============================================================================
--- 8. УНИВЕРСАЛЬНЫЙ СКАНЕР СУЩНОСТЕЙ BLOX STRIKE (ПОДДЕРЖКА КАСТОМНЫХ МОДЕЛЕЙ)
+-- 8. СКАНЕР СУЩНОСТЕЙ (С КЭШЕМ)
 -- ============================================================================
--- В Blox Strike модельки игроков могут лежать как в Players.Character, так и в
--- Workspace.Characters / Workspace.Players / напрямую в Workspace.
 local CachedEntities = {}
 local LastEntityScan = 0
 
@@ -1163,9 +1116,7 @@ local function GetLocalCharacter()
 end
 
 local function IsSameTeam(plr, model)
-    if not Config.TeamCheck then
-        return false -- На разминке (Rozgrzewka) и при выключенном TeamCheck все считаются целями
-    end
+    if not Config.TeamCheck then return false end
     if plr and LocalPlayer.Team and plr.Team and plr.Team == LocalPlayer.Team then
         return true
     end
@@ -1183,13 +1134,9 @@ end
 local function GetEntityHealth(model, plr)
     if not model then return 0, 100 end
     local hum = model:FindFirstChildOfClass("Humanoid")
-    if hum then
-        return hum.Health, hum.MaxHealth
-    end
+    if hum then return hum.Health, hum.MaxHealth end
     local hpAttr = model:GetAttribute("Health") or (plr and plr:GetAttribute("Health"))
-    if type(hpAttr) == "number" then
-        return hpAttr, 100
-    end
+    if type(hpAttr) == "number" then return hpAttr, 100 end
     local hpVal = model:FindFirstChild("Health")
     if hpVal and hpVal:IsA("ValueBase") then
         return tonumber(hpVal.Value) or 100, 100
@@ -1217,7 +1164,8 @@ local function GetWeaponName(model)
 end
 
 local function ScanAllEnemies()
-    if tick() - LastEntityScan < 0.15 then
+    -- Кэш увеличен до 0.4с для снижения нагрузки в бою
+    if tick() - LastEntityScan < 0.4 then
         return CachedEntities
     end
     LastEntityScan = tick()
@@ -1249,12 +1197,9 @@ local function ScanAllEnemies()
         })
     end
 
-    -- 1. Проверка всех игроков из сервиса Players
     for _, plr in ipairs(Players:GetPlayers()) do
         if plr ~= LocalPlayer then
-            if plr.Character then
-                TryAddModel(plr.Character, plr)
-            end
+            if plr.Character then TryAddModel(plr.Character, plr) end
             local charsFolder = Workspace:FindFirstChild("Characters") or Workspace:FindFirstChild("Players")
             if charsFolder and charsFolder:FindFirstChild(plr.Name) then
                 TryAddModel(charsFolder:FindFirstChild(plr.Name), plr)
@@ -1262,16 +1207,12 @@ local function ScanAllEnemies()
         end
     end
 
-    -- 2. Проверка кастомных папок персонажей в Workspace (для ботов и кастомных спавнов Blox Strike)
-    for _, container in ipairs({
-        Workspace:FindFirstChild("Characters"),
-        Workspace:FindFirstChild("Players"),
-        Workspace:FindFirstChild("Bots"),
-        Workspace
-    }) do
+    -- Только специализированные контейнеры (БЕЗ рекурсии по Workspace — это главный краш-фактор)
+    for _, cname in ipairs({"Characters", "Players", "Bots"}) do
+        local container = Workspace:FindFirstChild(cname)
         if container then
             for _, child in ipairs(container:GetChildren()) do
-                if child:IsA("Model") and child.Name ~= LocalPlayer.Name and not child.Name:find("Camera") and not child.Name:find("Viewmodel") then
+                if child:IsA("Model") and child.Name ~= LocalPlayer.Name then
                     local linkedPlr = Players:GetPlayerFromCharacter(child) or Players:FindFirstChild(child.Name)
                     if linkedPlr ~= LocalPlayer then
                         TryAddModel(child, linkedPlr)
@@ -1286,7 +1227,7 @@ local function ScanAllEnemies()
 end
 
 -- ============================================================================
--- 9. ГАРАНТИРОВАННЫЙ 2D ESP + ALWAYS-ON-TOP БЕЛЫЕ ЧАМСЫ + ТРАССЕРЫ ПУЛЬ
+-- 9. ESP + CHAMS (только Highlight, без BoxHandleAdornment)
 -- ============================================================================
 local ESPObjects = {}
 local HealthMemory = {}
@@ -1294,20 +1235,17 @@ local HealthMemory = {}
 local function GetOrCreateESP(model)
     if ESPObjects[model] then return ESPObjects[model] end
 
-    -- 2D Box на экране
     local BoxFrame = Instance.new("Frame")
     BoxFrame.Name = "ESPBox"
     BoxFrame.BackgroundTransparency = 1
     BoxFrame.Visible = false
     BoxFrame.Parent = ESPContainer
 
-    -- Чёрная внешняя обводка + белая основная рамка (как в CS2 / shitaro)
     local OuterStroke = Instance.new("UIStroke")
     OuterStroke.Color = Palette.White
     OuterStroke.Thickness = 1.2
     OuterStroke.Parent = BoxFrame
 
-    -- Имя сверху бокса
     local NameTag = Instance.new("TextLabel")
     NameTag.Size = UDim2.new(0, 160, 0, 13)
     NameTag.Position = UDim2.new(0.5, 0, 0, -14)
@@ -1319,7 +1257,6 @@ local function GetOrCreateESP(model)
     NameTag.TextSize = 11
     NameTag.Parent = BoxFrame
 
-    -- Оружие снизу бокса
     local WeapTag = Instance.new("TextLabel")
     WeapTag.Size = UDim2.new(0, 160, 0, 12)
     WeapTag.Position = UDim2.new(0.5, 0, 1, 2)
@@ -1331,7 +1268,6 @@ local function GetOrCreateESP(model)
     WeapTag.TextSize = 10
     WeapTag.Parent = BoxFrame
 
-    -- Фон полоски ХП слева
     local HPBg = Instance.new("Frame")
     HPBg.Size = UDim2.new(0, 3, 1, 0)
     HPBg.Position = UDim2.new(0, -6, 0, 0)
@@ -1359,7 +1295,6 @@ local function GetOrCreateESP(model)
     HPLabel.TextXAlignment = Enum.TextXAlignment.Right
     HPLabel.Parent = BoxFrame
 
-    -- Двойные чамсы: Highlight + BoxHandleAdornment (чтобы работало даже при превышении лимита 31 Highlight)
     local Highlight = Instance.new("Highlight")
     Highlight.Name = "ShitaroEnemyHL"
     Highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
@@ -1370,22 +1305,6 @@ local function GetOrCreateESP(model)
     Highlight.Adornee = model
     Highlight.Parent = ChamsContainer
 
-    local Adornments = {}
-    for _, part in ipairs(model:GetDescendants()) do
-        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
-            local boxAdorn = Instance.new("BoxHandleAdornment")
-            boxAdorn.Name = "ShitaroAdorn"
-            boxAdorn.Adornee = part
-            boxAdorn.AlwaysOnTop = true
-            boxAdorn.ZIndex = 5
-            boxAdorn.Size = (part.Name == "Head") and Vector3.new(1.25, 1.25, 1.25) or part.Size
-            boxAdorn.Color3 = Palette.White
-            boxAdorn.Transparency = 0.35
-            boxAdorn.Parent = ChamsContainer
-            table.insert(Adornments, boxAdorn)
-        end
-    end
-
     ESPObjects[model] = {
         Box = BoxFrame,
         Name = NameTag,
@@ -1393,8 +1312,7 @@ local function GetOrCreateESP(model)
         HPBg = HPBg,
         HPFill = HPFill,
         HPLabel = HPLabel,
-        Highlight = Highlight,
-        Adornments = Adornments
+        Highlight = Highlight
     }
     return ESPObjects[model]
 end
@@ -1404,18 +1322,12 @@ local function CleanupStaleESP(activeModels)
         if not model or not model.Parent or not activeModels[model] then
             if data.Box then data.Box:Destroy() end
             if data.Highlight then data.Highlight:Destroy() end
-            if data.Adornments then
-                for _, ad in ipairs(data.Adornments) do
-                    ad:Destroy()
-                end
-            end
             ESPObjects[model] = nil
             HealthMemory[model] = nil
         end
     end
 end
 
--- Отрисовка неонового трассера пули (как на видео)
 local function SpawnBulletTracer(startPos, endPos)
     if not Config.BulletTracers then return end
     local dist = (endPos - startPos).Magnitude
@@ -1445,7 +1357,7 @@ local function SpawnBulletTracer(startPos, endPos)
 end
 
 -- ============================================================================
--- 10. КАСТОМНОЕ 3-Е ЛИЦО И СИНИЕ ЧАМСЫ ДЛЯ BLOX STRIKE (ЧЕРЕЗ RENDERSTEP PRIORITY)
+-- 10. КАМЕРА + AA (БЕЗ CFrame-форса камеры и БЕЗ телепорта позиции)
 -- ============================================================================
 local SelfHighlight = Instance.new("Highlight")
 SelfHighlight.Name = "ShitaroSelfHL"
@@ -1459,7 +1371,6 @@ SelfHighlight.Parent = ChamsContainer
 local spinYaw = 0
 local jitterSide = false
 
--- Привязываемся ПОСЛЕ скрипта камеры Blox Strike, чтобы игра не сбрасывала камеру обратно в 1-е лицо
 RunService:BindToRenderStep("ShitaroCameraAndAA", Enum.RenderPriority.Camera.Value + 50, function()
     local myChar = GetLocalCharacter()
     StatusLabel.Text = string.format(
@@ -1472,9 +1383,9 @@ RunService:BindToRenderStep("ShitaroCameraAndAA", Enum.RenderPriority.Camera.Val
     local myRoot = myChar:FindFirstChild("HumanoidRootPart") or myChar:FindFirstChild("Torso") or myChar:FindFirstChild("UpperTorso")
     local myHum = myChar:FindFirstChildOfClass("Humanoid")
 
-    -- 1. Anti-Aim вращение моделькой (как на видео: спиной / джиттером / спинботом)
-    if Config.AAEnable and myRoot then
-        if myHum then myHum.AutoRotate = false end
+    -- Anti-Aim: только вращение yaw, позиция НЕ меняется (устранён краш)
+    if Config.AAEnable and myRoot and myHum then
+        myHum.AutoRotate = false
         local camLook = Camera.CFrame.LookVector
         local baseYaw = math.deg(math.atan2(-camLook.X, -camLook.Z))
 
@@ -1500,40 +1411,23 @@ RunService:BindToRenderStep("ShitaroCameraAndAA", Enum.RenderPriority.Camera.Val
             baseYaw = baseYaw + math.random(-Config.ModifierOffset, Config.ModifierOffset)
         end
 
-        myRoot.CFrame = CFrame.new(myRoot.Position) * CFrame.Angles(0, math.rad(baseYaw), 0)
+        local curPos = myRoot.CFrame.Position
+        myRoot.CFrame = CFrame.new(curPos) * CFrame.Angles(0, math.rad(baseYaw), 0)
     elseif myHum then
         myHum.AutoRotate = true
     end
 
-    -- 2. Принудительное 3-е лицо и проявление локальной модельки
+    -- 3-е лицо: ТОЛЬКО через CameraMinZoomDistance/Max — никакого Camera.CFrame
     if Config.ThirdPerson and myRoot then
-        LocalPlayer.CameraMode = Enum.CameraMode.Classic
-        LocalPlayer.CameraMinZoomDistance = Config.ThirdPersonDist
-        LocalPlayer.CameraMaxZoomDistance = Config.ThirdPersonDist
+        pcall(function()
+            LocalPlayer.CameraMode = Enum.CameraMode.Classic
+            LocalPlayer.CameraMinZoomDistance = Config.ThirdPersonDist
+            LocalPlayer.CameraMaxZoomDistance = Config.ThirdPersonDist
+        end)
 
-        -- Проявляем все части тела локального игрока, которые Blox Strike прячет в 1-м лице
         for _, part in ipairs(myChar:GetDescendants()) do
             if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
                 part.LocalTransparencyModifier = 0
-            end
-        end
-
-        -- Если Blox Strike держит камеру в голове, отодвигаем её назад с проверкой стен
-        local camPos = Camera.CFrame.Position
-        if (camPos - myRoot.Position).Magnitude < 3.5 then
-            local desiredOffset = Vector3.new(0, Config.ThirdPersonHeight, Config.ThirdPersonDist)
-            local targetCFrame = Camera.CFrame * CFrame.new(desiredOffset)
-
-            local rayParams = RaycastParams.new()
-            rayParams.FilterType = Enum.RaycastFilterType.Exclude
-            rayParams.FilterDescendantsInstances = {myChar, Camera, EffectsFolder}
-
-            local dir = targetCFrame.Position - camPos
-            local hit = Workspace:Raycast(camPos, dir, rayParams)
-            if hit then
-                Camera.CFrame = CFrame.lookAt(hit.Position - dir.Unit * 0.5, camPos + Camera.CFrame.LookVector * 50)
-            else
-                Camera.CFrame = targetCFrame
             end
         end
 
@@ -1549,26 +1443,23 @@ RunService:BindToRenderStep("ShitaroCameraAndAA", Enum.RenderPriority.Camera.Val
 end)
 
 -- ============================================================================
--- 11. RAGEBOT / SILENT AIM / AUTO WALL / TRIGGERBOT & ГЛАВНЫЙ ЦИКЛ ESP
+-- 11. RAGE / SILENT AIM / TRIGGER
 -- ============================================================================
 local BestTarget = nil
 local LastFireTick = 0
 
 local function CanHitTarget(origin, targetPart, targetModel)
-    if Config.AutoWall or Config.TriggerThroughWalls then
-        return true
-    end
+    if Config.AutoWall or Config.TriggerThroughWalls then return true end
     local params = RaycastParams.new()
     params.FilterType = Enum.RaycastFilterType.Exclude
     params.FilterDescendantsInstances = {GetLocalCharacter(), Camera, EffectsFolder}
     local res = Workspace:Raycast(origin, (targetPart.Position - origin), params)
-    if not res or res.Instance:IsDescendantOf(targetModel) then
-        return true
-    end
+    if not res or res.Instance:IsDescendantOf(targetModel) then return true end
     return false
 end
 
 local function TriggerShoot(targetEntity)
+    if not targetEntity or not targetEntity.Head then return end
     local delaySec = math.max(0.03, Config.TriggerDelay / 1000)
     if tick() - LastFireTick < delaySec then return end
     LastFireTick = tick()
@@ -1577,12 +1468,7 @@ local function TriggerShoot(targetEntity)
     local myHead = myChar and myChar:FindFirstChild("Head")
     local aimPart = (Config.Override == "force body" and targetEntity.Root) or targetEntity.Head
 
-    -- Если включен Silent Aim без метахука — микро-наводка камеры на 1 кадр во время выстрела
-    local oldCamCF = Camera.CFrame
-    if Config.SilentAim and aimPart then
-        Camera.CFrame = CFrame.lookAt(Camera.CFrame.Position, aimPart.Position)
-    end
-
+    -- Никакого Camera.CFrame — только click
     if mouse1click then
         mouse1click()
     elseif VirtualInputManager then
@@ -1596,34 +1482,9 @@ local function TriggerShoot(targetEntity)
     if myHead and aimPart then
         SpawnBulletTracer(myHead.Position, aimPart.Position)
     end
-
-    if Config.SilentAim and aimPart then
-        task.defer(function()
-            Camera.CFrame = oldCamCF
-        end)
-    end
 end
 
--- Опциональный __namecall хук для экзекуторов с поддержкой hookmetamethod (Delta / Wave / Swift)
-pcall(function()
-    if hookmetamethod and getnamecallmethod then
-        local oldNamecall
-        oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-            local method = getnamecallmethod()
-            local args = {...}
-            if Config.RageEnable and Config.SilentAim and BestTarget and BestTarget.Head then
-                if self == Workspace and (method == "Raycast" or method == "FindPartOnRay" or method == "FindPartOnRayWithIgnoreList") then
-                    if method == "Raycast" and typeof(args[1]) == "Vector3" and typeof(args[2]) == "Vector3" then
-                        local origin = args[1]
-                        args[2] = (BestTarget.Head.Position - origin).Unit * 1500
-                        return oldNamecall(self, unpack(args))
-                    end
-                end
-            end
-            return oldNamecall(self, ...)
-        end)
-    end
-end)
+-- ХУК __namecall УДАЛЁН ПОЛНОСТЬЮ (был главный краш-фактор)
 
 RunService.RenderStepped:Connect(function()
     local enemies = ScanAllEnemies()
@@ -1632,7 +1493,6 @@ RunService.RenderStepped:Connect(function()
     local myHum = myChar and myChar:FindFirstChildOfClass("Humanoid")
     local myRoot = myChar and (myChar:FindFirstChild("HumanoidRootPart") or myChar:FindFirstChild("Torso"))
 
-    -- BunnyHop
     if Config.BunnyHop and myHum and myRoot and UserInputService:IsKeyDown(Enum.KeyCode.Space) then
         if myHum.FloorMaterial ~= Enum.Material.Air then
             myHum:ChangeState(Enum.HumanoidStateType.Jumping)
@@ -1643,7 +1503,6 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- Удаление ослепления и дыма
     if Config.NoFlash then
         local pg = LocalPlayer:FindFirstChild("PlayerGui")
         if pg then
@@ -1663,7 +1522,6 @@ RunService.RenderStepped:Connect(function()
         activeMap[ent.Model] = true
         local esp = GetOrCreateESP(ent.Model)
 
-        -- 1. Проверка изменения здоровья врага для генерации точных хитлогов как на видео
         local prevHP = HealthMemory[ent.Model] or ent.Health
         if ent.Health < prevHP then
             local dmg = math.max(1, math.floor(prevHP - ent.Health))
@@ -1686,7 +1544,6 @@ RunService.RenderStepped:Connect(function()
         end
         HealthMemory[ent.Model] = ent.Health
 
-        -- 2. Расширение хитбоксов (Hitbox Expander)
         if ent.Head then
             if Config.HitboxExpander then
                 ent.Head.Size = Vector3.new(Config.HitboxSize, Config.HitboxSize, Config.HitboxSize)
@@ -1699,18 +1556,11 @@ RunService.RenderStepped:Connect(function()
             end
         end
 
-        -- 3. Чамсы сквозь стены (Highlight + Adornments)
         local chamsActive = Config.ESPEnable and Config.EnemyChams
         if esp.Highlight then
             esp.Highlight.Enabled = chamsActive
         end
-        if esp.Adornments then
-            for _, ad in ipairs(esp.Adornments) do
-                ad.Visible = chamsActive
-            end
-        end
 
-        -- 4. Отрисовка 2D Бокса, Полоски 100HP и Оружия
         local pos3D = ent.Root.Position
         local screenPos, onScreen = Camera:WorldToViewportPoint(pos3D)
 
@@ -1736,7 +1586,6 @@ RunService.RenderStepped:Connect(function()
             esp.HPLabel.Visible = Config.HealthText
             esp.HPLabel.Text = tostring(math.floor(ent.Health)) .. "HP"
 
-            -- Поиск ближайшей к прицелу цели для Ragebot / Silent Aim
             local dist2D = (Vector2.new(screenPos.X, screenPos.Y) - vpCenter).Magnitude
             if dist2D < closestDist and CanHitTarget(Camera.CFrame.Position, ent.Head, ent.Model) then
                 closestDist = dist2D
@@ -1749,9 +1598,7 @@ RunService.RenderStepped:Connect(function()
 
     CleanupStaleESP(activeMap)
 
-    -- 5. Автовыстрел (Rage AutoShoot + TriggerBot)
     if (Config.RageEnable and Config.AutoShoot) or Config.TriggerEnable then
-        -- Проверка прямого наведения луча по центру экрана (TriggerBot)
         local unitRay = Camera:ViewportPointToRay(vpCenter.X, vpCenter.Y)
         local rParams = RaycastParams.new()
         rParams.IgnoreWater = true
@@ -1779,7 +1626,6 @@ RunService.RenderStepped:Connect(function()
                 end
             end
         elseif Config.RageEnable and Config.AutoShoot and Config.SilentAim and BestTarget then
-            -- Ragebot AutoShoot + AutoWall по лучшей цели в радиусе экрана
             if math.random(1, 100) <= Config.Hitchance then
                 TriggerShoot(BestTarget)
             end
@@ -1787,4 +1633,4 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
-PushHitlog("initialized <font color='rgb(165,132,245)'>shitaro.crack v2.0</font> | universal entity esp & 3rd person active", 5)
+PushHitlog("initialized <font color='rgb(165,132,245)'>shitaro.crack v2.0-fixed</font> | crash-safe build", 5)
